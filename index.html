@@ -21,6 +21,7 @@ body {
     }
 }
 
+
 h1 {
     font-weight:300;
     line-height: 1.15em;
@@ -68,6 +69,11 @@ section {
      width: 20%;
      float: left;
 }
+
+.move-down {
+    margin-top:1.2cm;
+}
+
 .col-4 {
      width: 25%;
      float: left;
@@ -443,7 +449,7 @@ pre {
         </div>
 
         <div class="affil-row">
-            <div class="venue text-center"><b>arXiv 2022 </b></div>
+            <div class="venue text-center"><b>arXiv 2023 </b></div>
         </div>
 
         </center>
@@ -477,35 +483,17 @@ pre {
     </section>
      -->
 
-
-
     <section id="teaser-image">
         <center>
             <figure>
-
-
-                <video width="650" loop autoplay muted>
-                    <source src="materials/teaser-2.mp4" type="video/mp4">
+                <video class="centered" width="80%" autoplay loop muted playsinline class="video-background " >
+                    <source src="assets/LION_video_v10.mp4#t=0.001" type="video/mp4">
+                    Your browser does not support the video tag.
                 </video>
-
-                <br><br>
-                
-                <video width="960" loop autoplay muted>
-                    <source src="materials/all_results.mp4" type="video/mp4">
-                </video>
-
-                <!-- <br><br> -->
-
-                <!-- <video width="800" loop autoplay muted style="border:1px solid black">
-                    <source src="materials/new3.mp4" type="video/mp4">
-                </video>
- -->
             </figure>
 
         </center>
     </section>
-    
-    
 
     
     <section id="abstract"/>
@@ -521,40 +509,39 @@ pre {
         <hr>
         <h2>Method</h2>
 
-            We illustrate that the approach enables the following traits.
-            
-            <div class="mx-auto">
-                <left><p>The proposed framework that composes a "generator" and an ensemble of "scorers" through iterative consensus enables zero-shot generalization across a variety of multimodal tasks.</p></left>
-                <center><img class="card-img-top" src="materials/teaser.png" style="width:950px"></center>
-            </div>
 
+        <div class="flex-row">
+            <p> 
+                We are interested in repurposing a diffusion for a set of different downstream tasks.
+                LION focuses on learning a 3D generative model directly from geometry data without image-based training. 
+                Similar to previous 3D DDMs in this setting, LION operates on point clouds. However, it is constructed as a VAE with DDMs in latent
+                space. LION comprises a hierarchical latent space with a vector-valued global shape latent and another
+                point-structured latent space. The latent representations are predicted with point cloud processing
+                encoders, and two latent DDMs are trained in these latent spaces. Synthesis in LION proceeds by drawing 
+                novel latent samples from the hierarchical latent DDMs and decoding back to the original point
+                cloud space. Importantly, we also demonstrate how to augment LION with modern surface reconstruction methods to 
+                synthesize smooth shapes as desired by artists. We propose two methodological contributions to enable better repurposing of diffusion models:
+            </p>
+            <p>
+                <b>Annealed Distribution Transitions through MCMC:</b> 
 
-            <br><br><br>
-
-
-
-            <div class="flex-row">
-                <div class="mx-auto">
-                    <left><p><b>Overview of the proposed unified framework.</b> Dashed lines are omitted for certain tasks. Orange lines represent the components used to refine the generated result.</p></left>
-                    <br>
-                    <center><img class="card-img-top" src="materials/framework.png" style="width:400px"></center>
-
-                    <br><br>
-
-                    <!-- <video width="800" loop autoplay muted style="border:1px solid black"> -->
-                    <video width="850" loop autoplay muted controls>
-                        <source src="materials/new3-2.mp4" type="video/mp4">
-                    </video>
-                </div>
-
-                <br><br>
-                <p><b>Image generation: </b> A pre-trained diffusion model is used as the generator, and multiple scorers, such as CLIP and image classifiers, are used to provide feedback to the generator.</p>
-                <p><b>Video question answering: </b> GPT-2 is used as the generator, and a set of CLIP models are used as scorers.</p>
-                <p><b>Grade school math: </b> GPT-2 is used as the generator, and a set of question-solution classifiers are used as scorers.</p>
-                <p><b>Robot manipulation: </b> MPC+World model is used as the generator, and a pre-trained image segmentation model is used to compute the scores from multiple camera views to select the best action.</p>
-
-            </div>
-
+                using a specified MCMC transition kernel.
+                Extending LION with <a href="https://arxiv.org/abs/2106.03452"><b>Shape As Points</b></a> (SAP) geometry reconstruction
+                allows us to also output smooth meshes. Fine-tuning SAP on data generated by LION's autoencoder
+                reduces synthesis noise and enables us to generate high-quality geometry. LION combines (latent)
+                point cloud-based modeling, ideal for DDMs, with surface reconstruction, desired by artists.
+            </p>
+            <p>
+                <b>Energy Based Diffusion Parameterization:</b> Since LION is set up as a VAE, it can be easily adapted for different tasks without 
+                retraining the latent DDMs: We can efficiently fine-tune LION's encoders on voxelized or noisy inputs,
+                which a user can provide for guidance. This enables multimodal voxel-guided synthesis and shape 
+                denoising. We also leverage LION's latent spaces for shape interpolation and autoencoding. Optionally
+                training the DDMs conditioned on CLIP embeddings enables image- and text-driven 3D generation.
+            </p>
+            <p>
+                Below, we demonstrate how we may repurppose diffusion models in a wide set of different manners. 
+            </p>
+        </div>
     </section>
 
 
@@ -566,11 +553,17 @@ pre {
         <hr>
         <h2>2D Distribution Composition</h2>  
             <center>
+            <div class="flex-row">
+                <p>First, we illustrate compositional generation when composing 2D distributions.</p>
+            </div> 
+
             <figure>
-                <video class="centered" width="100%" autoplay loop muted playsinline class="video-background " >
-                    <source src="materials/vqa.mp4#t=0.001" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+                <a>
+                    <img width="100%" src="materials/2d.png"> 
+                </a>
+                <p class="caption">
+                    Generated point clouds and reconstructed meshes of airplanes.             
+                </p> <br>
             </figure>
             </center>
 
@@ -578,26 +571,36 @@ pre {
 
 
         <h2>Object Generation</h2>  
+            <div class="flex-row">
+                <p>Below we show samples from a LION model that was trained on shapes from multiple ShapeNet catgories, <l>without any class-conditioning</l>. We did on purpose not use conditioning to explore LION's scalability to diverse and multimodal datasets in the unconditional setting.</p>
+            </div> 
 
             <center>
             <figure>
-                <video class="centered" width="100%" autoplay loop muted playsinline class="video-background " >
-                    <source src="materials/math.mp4#t=0.001" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+                <a>
+                    <img width="100%" src="materials/cube.png"> 
+                </a>
+                <p class="caption">
+                    Generated point clouds and reconstructed meshes of airplanes.             
+                </p> <br>
             </figure>
             </center>
 
         <hr>
 
         <h2>Class-Conditional Generation</h2>  
+            <div class="flex-row">
+                <p>Below we show samples from a LION model that was trained on shapes from multiple ShapeNet catgories, <l>without any class-conditioning</l>. We did on purpose not use conditioning to explore LION's scalability to diverse and multimodal datasets in the unconditional setting.</p>
+            </div> 
 
             <center>
             <figure>
-                <video class="centered" width="100%" autoplay loop muted playsinline class="video-background " >
-                    <source src="materials/image_generation.mp4#t=0.001" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+                <a>
+                    <img width="100%" src="materials/classifier.png"> 
+                </a>
+                <p class="caption">
+                    HMC sampling transitions enables more accurate classifier based generation of images
+                </p> <br>
             </figure>
             </center>
 
@@ -605,18 +608,21 @@ pre {
 
 
         <h2>Compositional Text-to-Image Generation</h2>  
+            <div class="flex-row">
+                <p>Below we show samples from a LION model that was trained on shapes from multiple ShapeNet catgories, <l>without any class-conditioning</l>. We did on purpose not use conditioning to explore LION's scalability to diverse and multimodal datasets in the unconditional setting.</p>
+            </div> 
 
             <center>
             <figure>
-                <video class="centered" width="100%" autoplay loop muted playsinline class="video-background " >
-                    <source src="materials/robot_faster_font2.mp4#t=0.001" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+                <a>
+                    <img width="80%" src="materials/text2img.png"> 
+                </a>
+                <p class="caption">
+                    By composing different energy-based diffusion models we can generate complex combinations of
+                    natural language descriptions.
+                </p> <br>
             </figure>
             </center>
-
-        <!-- <hr> -->
-            
             
 
     </section> 
@@ -629,7 +635,7 @@ pre {
         <h2>Related Projects</h2>  
 
           <br>
-          Check out a list of our related papers on compositionality. A full list can be found <a href="https://energy-based-model.github.io/Energy-based-Model-MIT/">here</a>!
+          Check out a list of our related papers on energy based models. A full list can be found <a href="https://energy-based-model.github.io/Energy-based-Model-MIT/">here</a>!
           <br>
 
         <div class="row vspace-top">
@@ -649,10 +655,13 @@ pre {
             complex text prompts.
         </div>
         </div>
+        </div>
 
         <div class="row vspace-top">
         <div class="col-sm-3">
-            <img src="materials/related/comp_cartoon.png" class="img-fluid" alt="comp_carton" style="width:100%">
+            <div class="move-down">
+                <img src="materials/related/comp_cartoon.png" class="img-fluid" alt="comp_carton" style="width:100%">
+            </div>
         </div>
         <div class="col-sm-9">
           <div class="paper-title">
@@ -663,6 +672,7 @@ pre {
             (through operators of conjunction, disjunction, or negation) together in a zero-shot manner.
             Our approach enables us to generate faces given a  description
             ((Smiling AND Female) OR (NOT Smiling AND Male)) or to combine several different objects together.
+        </div>
         </div>
         </div>
 
@@ -772,30 +782,6 @@ pre {
          </div>
     </section>
    
-
-
-<!-- 
-    <section id="paper">
-        <h2>Paper</h2>
-        <hr>
-        <div class="flex-row">
-            <div class="download-thumb">
-            <div style="box-sizing: border-box; padding: 16px; margin: auto;">
-                <a href="https://energy-based-model.github.io/composing-pretrained-models/"><img class="screenshot" src="materials/thumb_finger.png"></a>
-            </div>
-        </div>
-            <div class="paper-stuff">
-                <p><b>Composing Ensembles of Pre-trained Models via Iterative Consensus</b></p>
-                <p>Shuang Li, Yilun Du, Joshua B. Tenenbaum, Antonio Torralba, Igor Mordatch</p>
-                <div><span class="material-icons"> description </span><a href="https://arxiv.org/abs/2210.06978"> arXiv version</a></div>
-                <div><span class="material-icons"> integration_instructions </span><a href="https://github.com/nv-tlabs/LION"> Code</a></div>
-            </div>
-            </div>
-        </div>
-    </section>
-
- -->
-
     <!-- <section id="bibtex">
         <h2>Citation</h2>
         <hr>
