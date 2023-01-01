@@ -4,7 +4,11 @@
 
 <script src="bootstrap.js"></script>
 <script type="text/javascript" charset="utf-8" src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script> 
+<!---
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+--->
+<script src="load-mathjax.js" async></script>
+
 
 <style type="text/css">
 body {
@@ -469,25 +473,11 @@ pre {
         </div></div>
     </div>
 
-    
-    <!-- <section id="teaser-image">
-        <center>
-            <figure>
-                <video class="centered" width="80%" autoplay loop muted playsinline class="video-background " >
-                    <source src="assets/LION_video_v10.mp4#t=0.001" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </figure>
-
-        </center>
-    </section>
-     -->
-
     <section id="teaser-image">
         <center>
             <figure>
                 <video class="centered" width="80%" autoplay loop muted playsinline class="video-background " >
-                    <source src="materials/teaser.mp4#t=0.001" type="video/mp4">
+                    <source src="materials/teaser.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
             </figure>
@@ -512,7 +502,8 @@ pre {
 
         <div class="flex-row">
             <p> 
-                We are interested in repurposing a diffusion for a set of different downstream tasks.
+                 by utilizing probabilistic compositions as an algebra to repurpose the diffusion model for downstream
+tasks.
                 LION focuses on learning a 3D generative model directly from geometry data without image-based training. 
                 Similar to previous 3D DDMs in this setting, LION operates on point clouds. However, it is constructed as a VAE with DDMs in latent
                 space. LION comprises a hierarchical latent space with a vector-valued global shape latent and another
@@ -554,7 +545,7 @@ pre {
         <h2>2D Distribution Composition</h2>  
             <center>
             <div class="flex-row">
-                <p>First, we illustrate compositional generation when composing 2D distributions.</p>
+                <p>First, we illustrate how we may generate samples from c do different compositions of 2D distributions. In composi</p>
             </div> 
 
             <figure>
@@ -562,7 +553,10 @@ pre {
                     <img width="100%" src="materials/2d.png"> 
                 </a>
                 <p class="caption">
-                    Generated point clouds and reconstructed meshes of airplanes.             
+                    A combination of MCMC sampling and a energy-based diffusion parameterization enables us to
+					take two separately trained diffusion models on distributions $p_1(x)$ and $p_2(x)$ and generate
+					samples from various compositions of these distributions. Note that adding distributions $p_1(x)$
+					and $p_2(x)$ requires an energy-based parameterization to get a density estimate per point.
                 </p> <br>
             </figure>
             </center>
@@ -572,7 +566,13 @@ pre {
 
         <h2>Object Generation</h2>  
             <div class="flex-row">
-                <p>Below we show samples from a LION model that was trained on shapes from multiple ShapeNet catgories, <l>without any class-conditioning</l>. We did on purpose not use conditioning to explore LION's scalability to diverse and multimodal datasets in the unconditional setting.</p>
+                <p>We may repurpose a diffusion model which generates an object at a single position $y_i$ to generate multi-object scenes with $c$ objects by utilizing the following probability decomposition:
+				\[ \log p_\theta(x | y_1, \ldots, y_c) = \log p_\theta(x) + \sum_{i=1}^c \left( \log p_\theta(x | y_i) - \log p_\theta(x) \right). \]
+				Below, we illustrate the results when using this decomposition. Our probabilistic repurposing enables us to accurately generate 5
+				different cubes in a scene. The use of MCMC sampling to transition between annealed distributions
+				substantially improves the ability to generate multi-object scenes, with increasing number of steps
+				of MCMC improving the underlying compositional generation performance (right image). 
+</p>
             </div> 
 
             <center>
@@ -581,7 +581,8 @@ pre {
                     <img width="100%" src="materials/cube.png"> 
                 </a>
                 <p class="caption">
-                    Generated point clouds and reconstructed meshes of airplanes.             
+                    <b>a)</b> Using a HMC sampling procedure enables more accurate generation of multi-object scenes. <b>b)</b> The accuracy of sampling from composed distribution monotonically increases with the number of MCMC sets with Metropolis
+					Adjustment (enabled by a energy-based diffusion parameterization) significantly improving compositional performance.
                 </p> <br>
             </figure>
             </center>
@@ -590,7 +591,12 @@ pre {
 
         <h2>Class-Conditional Generation</h2>  
             <div class="flex-row">
-                <p>Below we show samples from a LION model that was trained on shapes from multiple ShapeNet catgories, <l>without any class-conditioning</l>. We did on purpose not use conditioning to explore LION's scalability to diverse and multimodal datasets in the unconditional setting.</p>
+                <p>We may repurpose an unconditional diffusion for conditional image generation by utilizing the gradient estimate:
+            \[     \nabla_x\log p_\theta(x | y, t) = \nabla_x\log p_\theta(x | t) + \nabla_x\log p_\theta(y | x, t). \]
+				To sample from this distribution, in classifer based guidance, this gradient estimate is directly
+				plugged into the reverse diffusion procedure. Below, we illustrate that conditional image sampling 
+				can be substantially improved by using HMC to effectively transition between annealed distributions. 
+ </p>
             </div> 
 
             <center>
@@ -609,7 +615,15 @@ pre {
 
         <h2>Compositional Text-to-Image Generation</h2>  
             <div class="flex-row">
-                <p>Below we show samples from a LION model that was trained on shapes from multiple ShapeNet catgories, <l>without any class-conditioning</l>. We did on purpose not use conditioning to explore LION's scalability to diverse and multimodal datasets in the unconditional setting.</p>
+                <p>We may also probabilistically repurpose a text-to-image model for compositional image generation. For example, given a complex scene description:
+                \[     \text{``A horse'' \texttt{AND} (``A sandy beach'' \texttt{OR} ``Grass plains'') \texttt{AND} (\texttt{NOT} ``Sunny'').} \]
+                We may utilize probability as an algebra to specify this complex scene description:
+                \[
+p^{\text{comp}}_\theta(x|y_{\text{text}}) \propto \frac{p_\theta(x|\text{``A horse''})\left[\frac{1}{2}p_\theta(x|\text{``A sandy beach''}) + \frac{1}{2}p_\theta(x|\text{``Grass plains''})\right]}{p_\theta(x|\text{``Sunny''})^\alpha}.
+\]
+            We may then sample from this composed distribution consisting of multiple instances of the 
+text-to-image model using the sampling procedures described above. We provide example illustrations of this procedure below: 
+                </p>
             </div> 
 
             <center>
@@ -618,7 +632,7 @@ pre {
                     <img width="80%" src="materials/text2img.png"> 
                 </a>
                 <p class="caption">
-                    By composing different energy-based diffusion models we can generate complex combinations of
+                    By composing different energy-based text-to-image diffusion models we can generate complex combinations of
                     natural language descriptions.
                 </p> <br>
             </figure>
