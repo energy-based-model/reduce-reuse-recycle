@@ -524,14 +524,14 @@ noise to $q_{t}^{\textup{prod}}(x_t)$.
 				steps of MCMC sampling.
                   </p>
             <p>
-                <b>Energy Based Diffusion Parameterization:</b> In practice, MCMC sampling does not correctly sample from underlying distribution without a Metropolis Adjustment. With the typical score parameterization of diffusion models,
+                <b>Energy Based Diffusion Parameterization:</b> In practice, MCMC sampling does not correctly sample from underlying distribution without a Metropolis Adjustment step. With the typical score parameterization of diffusion models,
 				this is not possible, as there is no unnormalized density associated with the score field. Instead, we propose
 				to use an energy based parameterization of diffusion model, where at each timestep, our neural network predicts an <b>scalar energy value for each data point</b> and the utilizes the gradient of the energy with respect to the input as the score for the diffusion process. The predicted energy gives us an <b>unnormalized estimate of
 				the probability density</b>, enabling us to use Metropolis Adjustment in sampling. We further show that
 				the unnormalized estimate of the density enables us to do additional compositions with a diffusion model.
 			</p>
             <p>
-                Below, we demonstrate results illustrating how we may use the above tools to repurppose diffusion models in a wide set of different manners. 
+                Below, we demonstrate results illustrating how we may use the above tools to re-purpose diffusion models in a variety of different settings. 
             </p>
         </div>
     </section>
