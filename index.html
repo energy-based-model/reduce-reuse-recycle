@@ -520,10 +520,10 @@ q^{1}(x_{0})q^2(x_{0})~ q(x_t|x_{0})\right).\]
 				When the $t > 0$, the above expressions are not equal, and thus sample from the incorrect reverse diffusion process for $q^{\textup{prod}}(x)$. To address this theoretical issue, we propose two methodological contributions to properly sample across a set of different compositions of diffusion models (see our paper for analysis of why other forms of composition fail):
 			</p>
             <p>
-                <b>Sampling from Composed Diffusion Models using Annealed MCMC:</b> While the score estimate $\nabla_{x}\log q_{t}^{\textup{prod}}(x_t)$ does not correspond to the correct score estimate necessary to sample from the reverse diffusion process for $q_{t}^{\textup{prod}}(x_t)$, it still defines an annealed sequence of probability distributions from Gaussian
+                <b>Sampling from Composed Diffusion Models using Annealed MCMC:</b> While the score estimate $\nabla_{x}\log q_{t}^{\textup{prod}}(x_t)$ does not correspond to the correct score estimate necessary to sample from the reverse diffusion process for $q_{t}^{\textup{prod}}(x_t)$, it can be seen as defining an annealed sequence of unnormalized probability distributions (EBMs) starting from Gaussian
 noise to $q_{t}^{\textup{prod}}(x_t)$.
 				Thus, we may still sample from $q_{t}^{\textup{prod}}(x_t)$ using <b>Annealed MCMC</b>, where we start from
-				Gaussian noise, and transition between each intermediate probability distribution using multiple
+				Gaussian noise, and transition between each of these intermediate EBMs using multiple
 				steps of MCMC sampling.
                   </p>
             <p>
