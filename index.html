@@ -520,12 +520,12 @@ q^{1}(x_{0})q^2(x_{0})~ q(x_t|x_{0})\right).\]
 				When the $t > 0$, the above expressions are not equal, and thus sample from the incorrect reverse diffusion process for $q^{\textup{prod}}(x)$. To address this theoretical issue, we propose two methodological contributions to properly sample across a set of different compositions of diffusion models (see our paper for analysis of why other forms of composition fail):
 			</p>
             <p>
-                <b>Sampling from Composed Diffusion Models using Annealed MCMC:</b> While the score estimate $\nabla_{x}\log q_{t}^{\textup{prod}}(x_t)$ does not correspond to the correct score estimate necessary to sample from the reverse diffusion process for $q_{t}^{\textup{prod}}(x_t)$, it can be seen as defining an annealed sequence of unnormalized probability distributions (EBMs) via the score function starting from Gaussian
-noise to $q_{t}^{\textup{prod}}(x_t)$.
-				Thus, we may still sample from $q_{t}^{\textup{prod}}(x_t)$ using <b>Annealed MCMC</b>, where we start from
-				Gaussian noise, and transition between each of these intermediate EBMs using multiple
-				steps of MCMC sampling.
-                  </p>
+                <b>Sampling from Composed Diffusion Models using Annealed MCMC:</b> While the score estimate $\nabla_{x}\log q_{t}^{\textup{prod}}(x_t)$ does not correspond to the correct score estimate necessary to sample from the reverse diffusion process for $q_{t}^{\textup{prod}}(x_t)$, it does define a unnormalized probability distribution (EBM) at timestep t. The sequence of score estimates across different time points can then be seen as defining an annealed sequence of distributions starting from Gaussian
+noise and evolving to our desired distribution $q_{t}^{\textup{prod}}(x_t)$.
+				Thus, we may still sample from $q_{t}^{\textup{prod}}(x_t)$ using <b>Annealed MCMC</b> procedure, where we initialize a sample from
+				Gaussian noise, and draw samples sequentially across different intermediate distributions by running multiple steps of MCMC
+                sampling initialized from samples from the previous distribution. 
+            </p>
             <p>
                 <b>Energy Based Diffusion Parameterization:</b> In practice, MCMC sampling does not correctly sample from underlying distribution without a Metropolis Adjustment step. With the typical score parameterization of diffusion models,
 				this is not possible, as there is no unnormalized density associated with the score field. Instead, we propose
